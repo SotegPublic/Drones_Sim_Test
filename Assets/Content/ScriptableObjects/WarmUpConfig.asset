@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d7e9b4b5a0ec72428aede71d8d753ef, type: 3}
+  m_Name: WarmUpConfig
+  m_EditorClassIdentifier: 
+  objects:
+  - _objectRef:
+      m_AssetGUID: 5b9e754582211ae4f93b8a1b16b8e90f
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 0
+    _warmUpCount: 20
+  - _objectRef:
+      m_AssetGUID: 31e81630df970704f9fd36e6c4712557
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_EditorAssetChanged: 1
+    _warmUpCount: 30
