@@ -5,38 +5,45 @@ using UnityEngine;
 public class ResourcesController : IDisposable, IUpdatableController, IInitableController
 {
     private IGameObjectsPool _pool;
-    private GameConfig _gameConfig;
     private AssetRefsHolderConfig _assetRefsHolder;
     private IResourcesGridHolder _gridHolder;
+    private IChangableResourcesHolder _resourcesHolder; 
 
     private float _currentTime;
+    private int _maxResourcesCount;
+    private float _spawnResourcesFrequency;
 
-    public ResourcesController(IGameObjectsPool pool, GameConfig gameConfig, IResourcesGridHolder gridHolder, AssetRefsHolderConfig assetRefsHolder)
+    public ResourcesController(IGameObjectsPool pool, GameConfig gameConfig, IResourcesGridHolder gridHolder, AssetRefsHolderConfig assetRefsHolder,
+        IChangableResourcesHolder resourcesHolder)
     {
         _pool = pool;
-        _gameConfig = gameConfig;
         _gridHolder = gridHolder;
         _assetRefsHolder = assetRefsHolder;
+        _resourcesHolder = resourcesHolder;
+
+        _maxResourcesCount = gameConfig.MaxResourcesCount;
+        _spawnResourcesFrequency = gameConfig.SpawnResourcesFrequency;
     }
 
     public void Init()
     {
-        for (int i = 0; i < _gridHolder.GridCells.Count; i++)
-        {
-            _gridHolder.GridCells[i].OnCollected += ReturnResource;
-        }
-
+        _resourcesHolder.CreateResourcesList(_maxResourcesCount);
         TrySpawnResource();
+    }
+
+    public void ChangeSpawnResourcesFrequency(float spawnResourcesFrequency)
+    {
+        _spawnResourcesFrequency = spawnResourcesFrequency;
     }
 
     public void Update()
     {
-        if (_gridHolder.GetBusyCellsCount() == _gameConfig.MaxResourcesCount)
+        if (_gridHolder.GetBusyCellsCount() == _maxResourcesCount)
             return;
 
         _currentTime += Time.deltaTime;
 
-        if (_currentTime >= _gameConfig.SpawnResourcesFrequency)
+        if (_currentTime >= _spawnResourcesFrequency)
         {
             TrySpawnResource();
 
@@ -60,21 +67,23 @@ public class ResourcesController : IDisposable, IUpdatableController, IInitableC
         var resourceView = resourceObject.GetComponent<ResourceView>();
 
         resourceView.Transform.position = cell.Position;
+        resourceView.SetPlacementCell(cell);
         cell.ResourceView = resourceView;
+        _resourcesHolder.AddResource(resourceView);
+        resourceView.OnCollected += ReturnResource;
     }
 
-    private void ReturnResource(GridCell cell)
+    private void ReturnResource(ResourceView view)
     {
-        var resourcesView = cell.ResourceView;
-        _pool.ReturnViewToPool(resourcesView);
-        cell.Clear();
+        view.Cell.Clear();
+        view.OnCollected -= ReturnResource;
+        view.Clear();
+        _pool.ReturnViewToPool(view);
+        _resourcesHolder.RemoveResource(view);
     }
 
     public void Dispose()
     {
-        for (int i = 0; i < _gridHolder.GridCells.Count; i++)
-        {
-            _gridHolder.GridCells[i].OnCollected -= ReturnResource;
-        }
+        _resourcesHolder.Clear();
     }
 }

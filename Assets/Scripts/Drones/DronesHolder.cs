@@ -16,6 +16,23 @@ public class DronesHolder: IDronesHolder, IChangableDronesHolder
         _gameConfig = gameConfig;
     }
 
+    public int GetDronesWithTarget(Fraction fraction, ref DroneView[] drones)
+    {
+        var count = 0;
+        var fractionDrones = _drones[fraction];
+
+        for(int i = 0; i < fractionDrones.Count; i++)
+        {
+            if (fractionDrones[i].TargetResource != null)
+            {
+                drones[count] = fractionDrones[i];
+                count++;
+            }
+        }
+
+        return count;
+    }
+
     public void AddDrone(DroneView drone)
     {
         var fraction = drone.Fraction;
