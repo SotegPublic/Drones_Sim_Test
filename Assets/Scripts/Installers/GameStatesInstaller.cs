@@ -5,6 +5,9 @@ public class GameStatesInstaller : MonoInstaller
 {
     [SerializeField] private WarmUpConfig _warmUpConfig;
     [SerializeField] private GameConfig _gameConfig;
+    [SerializeField] private Collider _resourcesZoneCollider;
+    [SerializeField] private GameObject[] _obstacles;
+    [SerializeField] private ResourcesZoneConfig _resourcesZoneConfig;
     [SerializeField] private Fraction[] _fractions;
     public override void InstallBindings()
     {
@@ -15,7 +18,8 @@ public class GameStatesInstaller : MonoInstaller
         Container.BindInterfacesTo<GameStateMachine>().AsSingle().NonLazy();
 
         //bind states
-        Container.BindInterfacesAndSelfTo<WarmUpState>().AsSingle().WithArguments(_warmUpConfig).NonLazy();
+        Container.BindInterfacesAndSelfTo<GamePreparationState>().AsSingle().
+            WithArguments(_warmUpConfig, _resourcesZoneConfig, _resourcesZoneCollider, _obstacles).NonLazy();
         Container.BindInterfacesAndSelfTo<SpawnDronesState>().AsSingle().WithArguments(_fractions, _gameConfig).NonLazy();
     }
 }

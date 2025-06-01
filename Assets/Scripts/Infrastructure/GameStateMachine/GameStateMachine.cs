@@ -15,7 +15,7 @@ public class GameStateMachine : IGameStateMachine, IDisposable
         _gameStateHolder = stateHolder;
         _statesFactory = gamseStatesFactory;
 
-        _gameStates.Add(typeof(WarmUpState), _statesFactory.CreateState<WarmUpState>());
+        _gameStates.Add(typeof(GamePreparationState), _statesFactory.CreateState<GamePreparationState>());
     }
 
     [Inject]
@@ -47,8 +47,8 @@ public class GameStateMachine : IGameStateMachine, IDisposable
 
     public void StartGame()
     {
-        _gameStateHolder.ChangeCurrentGameState(typeof(WarmUpState));
-        _gameStates[typeof(WarmUpState)].EnterState();
+        _gameStateHolder.ChangeCurrentGameState(typeof(GamePreparationState));
+        _gameStates[typeof(GamePreparationState)].EnterState();
     }
 
     public void Update()

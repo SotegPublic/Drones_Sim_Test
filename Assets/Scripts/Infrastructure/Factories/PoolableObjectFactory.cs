@@ -11,7 +11,7 @@ public class PoolableObjectFactory : IPoolableObjectFactory
         _instantiator = instantiator;
     }
 
-    public IPoolableObject Create(GameObject prefab, Vector2 position, Quaternion rotation, Transform parent)
+    public IPoolableObject Create(GameObject prefab, Vector3 position, Quaternion rotation, Transform parent)
     {
         if (!prefab.TryGetComponent<IPoolableObject>(out var component))
             throw new Exception($"game object {prefab.name} dos't have IPoolableObject component");

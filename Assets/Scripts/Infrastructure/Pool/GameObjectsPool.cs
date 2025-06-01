@@ -45,7 +45,7 @@ public class GameObjectsPool : IGameObjectsPool
         _pools.Add(objectReference.AssetGUID, new PoolModel(handle));
     }
 
-    private async UniTask<IPoolableObject> GetPoolableObject(AsyncOperationHandle<GameObject> handler, Vector2 position)
+    private async UniTask<IPoolableObject> GetPoolableObject(AsyncOperationHandle<GameObject> handler, Vector3 position)
     {
         if (handler.Status == AsyncOperationStatus.None)
             await handler.Task;

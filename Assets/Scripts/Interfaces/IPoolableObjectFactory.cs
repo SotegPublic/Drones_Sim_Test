@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using Zenject;
 
-public interface IPoolableObjectFactory : IFactory<GameObject, Vector2, Quaternion, Transform, IPoolableObject>
+public interface IPoolableObjectFactory : IFactory<GameObject, Vector3, Quaternion, Transform, IPoolableObject>
 {
 }

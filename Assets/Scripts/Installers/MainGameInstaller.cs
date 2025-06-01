@@ -7,6 +7,7 @@ public class MainGameInstaller : MonoInstaller
 {
     [SerializeField] private GameBootstrapper _bootstrapper;
     [SerializeField] private Transform _poolTransform;
+    [SerializeField] private ResourcesZoneGizmoDrawler _gizmoDrawler;
 
     public override void InstallBindings()
     {
@@ -16,6 +17,9 @@ public class MainGameInstaller : MonoInstaller
         Container.Bind<IGameObjectsPool>().To<GameObjectsPool>().AsSingle().WithArguments(_poolTransform);
 
         Container.Bind<IPlayerInputHandler>().To<InputHandler>().AsSingle();
+
+        Container.BindInterfacesTo<ResourcesGridHolder>().AsSingle();
+        Container.Bind<ResourcesZoneGizmoDrawler>().FromInstance(_gizmoDrawler).AsSingle();
 
     }
 

@@ -309,7 +309,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &184636661
 Transform:
   m_ObjectHideFlags: 0
@@ -410,6 +410,7 @@ GameObject:
   - component: {fileID: 202554562}
   - component: {fileID: 202554561}
   - component: {fileID: 202554564}
+  - component: {fileID: 202554565}
   m_Layer: 0
   m_Name: SpawnPlane
   m_TagString: Untagged
@@ -502,6 +503,21 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 38.6, y: 0.1, z: 18.6}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &202554565
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 202554559}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a4fa77d3884ecc45a6be00063ac2d88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _resourcesZoneCollider: {fileID: 202554564}
+  _resourcesZoneConfig: {fileID: 11400000, guid: 5dea48b9485511e40a64b9aa6af5a4d0,
+    type: 2}
 --- !u!1 &299549242
 GameObject:
   m_ObjectHideFlags: 0
@@ -520,7 +536,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &299549243
 Transform:
   m_ObjectHideFlags: 0
@@ -1236,7 +1252,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1106546200
 Transform:
   m_ObjectHideFlags: 0
@@ -1356,6 +1372,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _warmUpConfig: {fileID: 11400000, guid: 2e806989afe7ee941be3261a0048dd92, type: 2}
+  _gameConfig: {fileID: 11400000, guid: 17cf9b98f3c50564e8af82e91ed9481c, type: 2}
+  _resourcesZoneCollider: {fileID: 202554564}
+  _obstacles:
+  - {fileID: 140008679}
+  - {fileID: 479090318}
+  - {fileID: 831516517}
+  - {fileID: 2043370478}
+  - {fileID: 1793053619}
+  _resourcesZoneConfig: {fileID: 11400000, guid: 5dea48b9485511e40a64b9aa6af5a4d0,
+    type: 2}
+  _fractions:
+  - _fractonBase: {fileID: 1531369344}
+    _fractionMaterial: {fileID: 2100000, guid: 8d608ae77ad45e14c9c51553ee11619c, type: 2}
+  - _fractonBase: {fileID: 4175396182106248030}
+    _fractionMaterial: {fileID: 2100000, guid: 5efa4795d6617824c974a4f021b8c295, type: 2}
 --- !u!114 &1445413906
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1370,6 +1401,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _bootstrapper: {fileID: 118552489}
   _poolTransform: {fileID: 1945472121}
+  _gizmoDrawler: {fileID: 202554565}
 --- !u!114 &1445413907
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1491,6 +1523,18 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9b5e34981ce8844409930ddf8c65c2ec, type: 3}
+--- !u!114 &1531369344 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 944551571476209204, guid: 9b5e34981ce8844409930ddf8c65c2ec,
+    type: 3}
+  m_PrefabInstance: {fileID: 1531369343}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a33a8f43fcc6cf549bdbb757746c00eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1583826435
 GameObject:
   m_ObjectHideFlags: 0
@@ -1509,7 +1553,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1583826436
 Transform:
   m_ObjectHideFlags: 0
@@ -1615,7 +1659,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1700087031
 Transform:
   m_ObjectHideFlags: 0
@@ -1854,7 +1898,7 @@ Transform:
   m_GameObject: {fileID: 1945472120}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 50, z: 0}
+  m_LocalPosition: {x: 0, y: 50, z: 50}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2058,6 +2102,18 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9b5e34981ce8844409930ddf8c65c2ec, type: 3}
+--- !u!114 &4175396182106248030 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 944551571476209204, guid: 9b5e34981ce8844409930ddf8c65c2ec,
+    type: 3}
+  m_PrefabInstance: {fileID: 4175396182106248029}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a33a8f43fcc6cf549bdbb757746c00eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
