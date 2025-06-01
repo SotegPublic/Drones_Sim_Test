@@ -21,15 +21,12 @@ public class ResourcesController : IDisposable, IUpdatableController, IInitableC
 
     public void Init()
     {
-        for(int i = 0; i < _gridHolder.GridCells.Count; i++)
+        for (int i = 0; i < _gridHolder.GridCells.Count; i++)
         {
             _gridHolder.GridCells[i].OnCollected += ReturnResource;
         }
 
-        if (_gridHolder.TryGetFreeRandomCell(out var cell))
-        {
-            SpawnResource(cell).Forget();
-        }
+        TrySpawnResource();
     }
 
     public void Update()
@@ -41,12 +38,17 @@ public class ResourcesController : IDisposable, IUpdatableController, IInitableC
 
         if (_currentTime >= _gameConfig.SpawnResourcesFrequency)
         {
-            if(_gridHolder.TryGetFreeRandomCell(out var cell))
-            {
-                SpawnResource(cell).Forget();
-            }
+            TrySpawnResource();
 
             _currentTime = 0;
+        }
+    }
+
+    private void TrySpawnResource()
+    {
+        if (_gridHolder.TryGetFreeRandomCell(out var cell))
+        {
+            SpawnResource(cell).Forget();
         }
     }
 
