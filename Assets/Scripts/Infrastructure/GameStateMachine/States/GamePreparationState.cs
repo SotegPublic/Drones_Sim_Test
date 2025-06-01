@@ -1,10 +1,10 @@
 ﻿using Cysharp.Threading.Tasks;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using Zenject;
 
-public class GamePreparationState : BaseState
+public class GamePreparationState : BaseState, IInitializable
 {
     private WarmUpConfig _warmUpConfig;
     private IGameObjectsPool _gameObjectsPool;
@@ -16,7 +16,8 @@ public class GamePreparationState : BaseState
 
     private List<UniTask> _tasks;
     private float _agentDefaultRadius;
-    
+
+    [Inject]
     public GamePreparationState(WarmUpConfig warmUpConfig, IGameObjectsPool gameObjectsPool, IChangableResourcesGridHolder gridHolder,
         ResourcesZoneConfig resourcesZoneConfig, GameObject[] obstacles, Collider resourcesZoneCollider)
     {
@@ -28,11 +29,14 @@ public class GamePreparationState : BaseState
         _resourcesZoneCollider = resourcesZoneCollider;
     }
 
+    public void Initialize()
+    {
+        CreateTasksList();
+    }
+
     public override void EnterState()
     {
         GenerateResourcesZoneGrid();
-
-        CreateTasksList();
         WarmUpAsync().Forget();
     }
 

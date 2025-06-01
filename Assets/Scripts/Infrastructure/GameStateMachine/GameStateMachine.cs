@@ -16,6 +16,7 @@ public class GameStateMachine : IGameStateMachine, IDisposable
         _statesFactory = gamseStatesFactory;
 
         _gameStates.Add(typeof(GamePreparationState), _statesFactory.CreateState<GamePreparationState>());
+        _gameStates.Add(typeof(SpawnDronesState), _statesFactory.CreateState<SpawnDronesState>());
     }
 
     [Inject]
@@ -36,10 +37,10 @@ public class GameStateMachine : IGameStateMachine, IDisposable
 
         switch (currentStateType)
         {
-            //case var _ when currentStateType == typeof(WarmUpState):
-            //    _gameStateHolder.ChangeCurrentGameState(typeof(SpawnFiguresOnFieldState));
-            //    _gameStates[typeof(SpawnFiguresOnFieldState)].EnterState();
-            //    break;
+            case var _ when currentStateType == typeof(GamePreparationState):
+                _gameStateHolder.ChangeCurrentGameState(typeof(SpawnDronesState));
+                _gameStates[typeof(SpawnDronesState)].EnterState();
+                break;
             default:
                 break;
         }
