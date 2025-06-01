@@ -1,4 +1,5 @@
 ﻿using System;
+using Zenject;
 
 public abstract class BaseState: IGameState
 {

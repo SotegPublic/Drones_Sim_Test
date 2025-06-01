@@ -23,6 +23,7 @@ public class MainGameInstaller : MonoInstaller
         Container.BindInterfacesTo<ResourcesGridHolder>().AsSingle();
         Container.Bind<ResourcesZoneGizmoDrawler>().FromInstance(_gizmoDrawler).AsSingle();
 
+        Container.BindInterfacesTo<ResourcesController>().AsSingle().WithArguments(_assetRefsHolderConfig, _gameConfig);
     }
 
 }

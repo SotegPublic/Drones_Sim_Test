@@ -84,7 +84,7 @@ public class GameObjectsPool : IGameObjectsPool
         System.Buffers.ArrayPool<UniTask<IPoolableObject>>.Shared.Return(tasks, clearArray: true);
     }
 
-    public void RemoveViewToPool(IPoolableObject poolableObject)
+    public void ReturnViewToPool(IPoolableObject poolableObject)
     {
         poolableObject.Transform.rotation = Quaternion.identity;
         poolableObject.Transform.localScale = Vector3.one;

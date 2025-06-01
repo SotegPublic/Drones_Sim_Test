@@ -21,5 +21,6 @@ public class GameStatesInstaller : MonoInstaller
         Container.BindInterfacesAndSelfTo<GamePreparationState>().AsSingle().
             WithArguments(_warmUpConfig, _resourcesZoneConfig, _resourcesZoneCollider, _obstacles).NonLazy();
         Container.BindInterfacesAndSelfTo<SpawnDronesState>().AsSingle().WithArguments(_fractions, _gameConfig).NonLazy();
+        Container.BindInterfacesAndSelfTo<GameInProgressState>().AsSingle();
     }
 }

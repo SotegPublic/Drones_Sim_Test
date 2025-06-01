@@ -16,4 +16,5 @@ MonoBehaviour:
   _maxDronesCount: 10
   _startDronesSpeed: 4
   _collectResourceTime: 2
-  _startResourcesFrequency: 3
+  _maxResourcesCount: 20
+  _spawnResourcesFrequency: 1.5
