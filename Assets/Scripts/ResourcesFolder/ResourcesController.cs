@@ -7,22 +7,26 @@ public class ResourcesController : IDisposable, IUpdatableController, IInitableC
     private IGameObjectsPool _pool;
     private AssetRefsHolderConfig _assetRefsHolder;
     private IResourcesGridHolder _gridHolder;
-    private IChangableResourcesHolder _resourcesHolder; 
+    private IChangableResourcesHolder _resourcesHolder;
+    private IMainUINotifier _uiNotifier;
 
     private float _currentTime;
     private int _maxResourcesCount;
     private float _spawnResourcesFrequency;
 
     public ResourcesController(IGameObjectsPool pool, GameConfig gameConfig, IResourcesGridHolder gridHolder, AssetRefsHolderConfig assetRefsHolder,
-        IChangableResourcesHolder resourcesHolder)
+        IChangableResourcesHolder resourcesHolder, IMainUINotifier uiNotifier)
     {
         _pool = pool;
         _gridHolder = gridHolder;
         _assetRefsHolder = assetRefsHolder;
         _resourcesHolder = resourcesHolder;
+        _uiNotifier = uiNotifier;
 
         _maxResourcesCount = gameConfig.MaxResourcesCount;
         _spawnResourcesFrequency = gameConfig.SpawnResourcesFrequency;
+
+        _uiNotifier.OnGenerationSpeedChange += ChangeSpawnResourcesFrequency;
     }
 
     public void Init()
@@ -85,5 +89,6 @@ public class ResourcesController : IDisposable, IUpdatableController, IInitableC
     public void Dispose()
     {
         _resourcesHolder.Clear();
+        _uiNotifier.OnGenerationSpeedChange -= ChangeSpawnResourcesFrequency;
     }
 }

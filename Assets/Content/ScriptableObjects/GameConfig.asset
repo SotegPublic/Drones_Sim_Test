@@ -15,6 +15,7 @@ MonoBehaviour:
   _startDronesCount: 5
   _maxDronesCount: 10
   _startDronesSpeed: 4
+  _maxDronesSpeed: 5
   _collectResourceTime: 2
   _lockResourceDistance: 1
   _maxResourcesCount: 20

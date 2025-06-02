@@ -6,21 +6,21 @@ public class SpawnDronesState : BaseState, IInitializable
 {
     private IDroneSpawner _droneSpawner;
     private GameConfig _gameConfig;
-    private Fraction[] _fractions;
+    private IFractionsHolder _fractionsHolder;
 
     private List<UniTask> _tasks;
 
     [Inject]
-    public SpawnDronesState(GameConfig gameConfig, Fraction[] fractions, IDroneSpawner droneSpawner)
+    public SpawnDronesState(GameConfig gameConfig, IFractionsHolder fractionsHolder, IDroneSpawner droneSpawner)
     {
         _gameConfig = gameConfig;
-        _fractions = fractions;
+        _fractionsHolder = fractionsHolder;
         _droneSpawner = droneSpawner;
     }
 
     public void Initialize()
     {
-        var tasksCount = _gameConfig.StartDronesCount * _fractions.Length;
+        var tasksCount = _gameConfig.StartDronesCount * _fractionsHolder.Fractions.Length;
         _tasks = new List<UniTask>(tasksCount);
     }
 
@@ -33,9 +33,9 @@ public class SpawnDronesState : BaseState, IInitializable
     {
         for (int i = 0; i < _gameConfig.StartDronesCount; i++)
         {
-            for(int j = 0; j < _fractions.Length; j++)
+            for(int j = 0; j < _fractionsHolder.Fractions.Length; j++)
             {
-                _tasks.Add(_droneSpawner.SpawnDrones(_fractions[j], i, _gameConfig.StartDronesSpeed));
+                _tasks.Add(_droneSpawner.SpawnDrones(_fractionsHolder.Fractions[j], i, _gameConfig.StartDronesSpeed));
             }
 
             await UniTask.Delay(200);

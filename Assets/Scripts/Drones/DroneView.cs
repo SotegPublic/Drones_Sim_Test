@@ -10,12 +10,16 @@ public class DroneView : MonoBehaviour, IPoolableObject
     [SerializeField] private Transform _transform;
     [SerializeField] private MeshRenderer _meshRenderer;
     [SerializeField] private NavMeshAgent _agent;
+    [SerializeField] private PathDrawler _pathDrawler;
 
     public AssetReferenceGameObject AssetRef => _assetRef;
     public GameObject GameObject => _gameObject;
     public Transform Transform => _transform;
     public NavMeshAgent Agent => _agent;
 
+    public void ShowPath(bool isShow)
+    {
+    }
 
     public void SetMaterial(Material material)
     {

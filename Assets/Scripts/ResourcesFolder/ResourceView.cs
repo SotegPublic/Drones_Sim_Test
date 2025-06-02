@@ -36,6 +36,12 @@ public class ResourceView : MonoBehaviour, IPoolableObject
         _isCollectig = true;
     }
 
+    public void Unlock(int unlockingDroneID)
+    {
+        if(unlockingDroneID == _lockingDroneID)
+            _isCollectig = false;
+    }
+
     public void Collected()
     {
         OnCollected?.Invoke(this);

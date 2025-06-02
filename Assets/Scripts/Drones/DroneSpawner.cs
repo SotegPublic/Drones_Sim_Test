@@ -32,4 +32,9 @@ public class DroneSpawner : IDroneSpawner
 
         _dronesHolder.AddDrone(droneModel);
     }
+
+    public void DespawnDrone(DroneView drone)
+    {
+        _pool.ReturnViewToPool(drone);
+    }
 }

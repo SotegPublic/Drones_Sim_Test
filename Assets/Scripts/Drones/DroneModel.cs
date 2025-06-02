@@ -69,6 +69,8 @@ public class DroneModel
 
     public void Clear()
     {
+        _targetRecource?.Unlock(_view.GetInstanceID());
+        _targetRecource = null;
         _view.ResetMaterial();
         _view.Agent.ResetPath();
         _view.Agent.isStopped = true;

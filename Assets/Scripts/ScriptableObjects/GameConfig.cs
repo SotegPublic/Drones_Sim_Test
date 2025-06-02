@@ -7,6 +7,7 @@ public class GameConfig : ScriptableObject
     [SerializeField] private int _startDronesCount;
     [SerializeField] private int _maxDronesCount;
     [SerializeField] private float _startDronesSpeed;
+    [SerializeField] private float _maxDronesSpeed;
 
     [Header("Resources")]
     [SerializeField] private float _collectResourceTime;
@@ -17,6 +18,7 @@ public class GameConfig : ScriptableObject
     public int StartDronesCount => _startDronesCount;
     public int MaxDronesCount => _maxDronesCount;
     public float StartDronesSpeed => _startDronesSpeed;
+    public float MaxDronesSpeed => _maxDronesSpeed;
     public float CollectResourceTime => _collectResourceTime;
     public int MaxResourcesCount => _maxResourcesCount;
     public float SpawnResourcesFrequency => _spawnResourcesFrequency;
