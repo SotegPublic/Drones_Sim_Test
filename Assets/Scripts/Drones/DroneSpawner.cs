@@ -30,7 +30,7 @@ public class DroneSpawner : IDroneSpawner
         droneModel.View.Transform.position = position;
 
         droneModel.View.Agent.enabled = true;
-        droneModel.View.Agent.SetDestination(position + Vector3.forward); //todo - костыль для срабатывания avoidancePriority, лучше в систему спавна по гриду вокруг базы
+        droneModel.View.Agent.SetDestination(position + fraction.FractonBase.SpawnTransform.forward); //todo - костыль для срабатывания avoidancePriority, лучше в систему спавна по гриду вокруг базы
 
         _dronesHolder.AddDrone(droneModel);
     }

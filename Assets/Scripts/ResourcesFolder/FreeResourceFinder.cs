@@ -16,7 +16,7 @@ public class FreeResourceFinder : IFreeResourceFinder
     {
         for(int i = 0; i < _resourcesHolder.Resources.Count; i++)
         {
-            if (!_resourcesHolder.Resources[i].IsCollectig)
+            if (!_resourcesHolder.Resources[i].IsCollecting)
                 return true;
         }
 
@@ -33,7 +33,7 @@ public class FreeResourceFinder : IFreeResourceFinder
 
         for (int i = 0; i < _resourcesHolder.Resources.Count; i++)
         {
-            if (_resourcesHolder.Resources[i].IsCollectig)
+            if (_resourcesHolder.Resources[i].IsCollecting)
                 continue;
 
             var freeResource = _resourcesHolder.Resources[i];

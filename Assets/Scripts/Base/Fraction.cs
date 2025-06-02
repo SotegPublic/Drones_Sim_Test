@@ -4,11 +4,20 @@ using UnityEngine;
 [Serializable]
 public class Fraction: IEquatable<Fraction>
 {
+    [SerializeField] private string _fractionName;
     [SerializeField] private BaseView _fractonBase;
     [SerializeField] private Material _fractionMaterial;
 
+    private int _resourcesCount;
+
+    public int ResourcesCount => _resourcesCount;
     public BaseView FractonBase => _fractonBase;
     public Material FractionMaterial => _fractionMaterial;
+
+    public void GetResource()
+    {
+        _resourcesCount++;
+    }
 
     public bool Equals(Fraction other)
     {

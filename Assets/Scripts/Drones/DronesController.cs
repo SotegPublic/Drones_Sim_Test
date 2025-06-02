@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class DronesController : IUpdatableController, IInitableController
 {
@@ -29,66 +31,117 @@ public class DronesController : IUpdatableController, IInitableController
 
         foreach (var drones in _dronesHolder.Drones.Values)
         {
-            SetTargetResources(drones);
-            LockResources(drones);
-            ResetLockedResources(drones);
+            for(int i = 0; i < drones.Count; i++)
+            {
+                ControllDrone(drones[i]);
+            }
         }
     }
 
-    private void SetTargetResources(List<DroneModel> dronesList)
+    private void ControllDrone(DroneModel droneModel)
+    {
+        switch (droneModel.State)
+        {
+            case DroneStateType.AwaitTarget:
+                SetTargetResource(droneModel);
+                break;
+            case DroneStateType.GoToTarget:
+                TryLockResource(droneModel);
+
+                if (IsResetingLockedResource(droneModel))
+                    break;
+
+                TryStartCollecting(droneModel);
+                break;
+            case DroneStateType.CollectTarget:
+                CollectResource(droneModel);
+                break;
+            case DroneStateType.Return:
+                TryHandOver(droneModel);
+                break;
+            case DroneStateType.None:
+            default:
+                break;
+        }
+    }
+
+    private void SetTargetResource(DroneModel droneModel)
     {
         if (!_finder.IsHaveFreeResources())
             return;
 
-        for (int i = 0; i < dronesList.Count; i++)
+        var tuple = _finder.GetNearestFreeResource(droneModel.View.Transform.position, droneModel.Fraction);
+
+        if (tuple.resource == null)
+            return;
+
+        if (tuple.resetingDrone != null)
         {
-            if (dronesList[i].TargetResource != null)
-                continue;
-
-            var tuple = _finder.GetNearestFreeResource(dronesList[i].View.Transform.position, dronesList[i].Fraction);
-
-            if (tuple.resource == null)
-                continue;
-
-            if (tuple.resetingDrone != null)
-                tuple.resetingDrone.ResetTarget();
-
-            dronesList[i].View.Agent.SetDestination(tuple.resource.Cell.Position);
-            dronesList[i].SetTarget(tuple.resource);
+            tuple.resetingDrone.ResetTarget();
+            tuple.resetingDrone.SetAwaitState();
         }
+
+        droneModel.View.Agent.SetDestination(tuple.resource.Cell.Position);
+        droneModel.SetGoToTargetState(tuple.resource);
     }
 
-    private void LockResources(List<DroneModel> dronesList)
+    private void TryLockResource(DroneModel droneModel)
     {
-        for (int i = 0; i < dronesList.Count; i++)
+        var sqrDistance = (droneModel.TargetResource.Transform.position - droneModel.View.Transform.position).sqrMagnitude;
+
+        if (sqrDistance < _sqrLockDistance)
         {
-            if (dronesList[i].TargetResource == null)
-                continue;
-
-            var sqrDistance = (dronesList[i].TargetResource.Transform.position - dronesList[i].View.Transform.position).sqrMagnitude;
-
-            if (sqrDistance < _sqrLockDistance)
+            if (!droneModel.TargetResource.IsCollecting)
             {
-                if (!dronesList[i].TargetResource.IsCollectig)
-                {
-                    dronesList[i].TargetResource.Lock(dronesList[i].View.GetInstanceID());
-                }
+                droneModel.TargetResource.Lock(droneModel.View.GetInstanceID());
             }
         }
     }
 
-    private void ResetLockedResources(List<DroneModel> dronesList)
+    private bool IsResetingLockedResource(DroneModel droneModel)
     {
-        for (int i = 0; i < dronesList.Count; i++)
+        if (droneModel.TargetResource.IsCollecting &&
+            droneModel.TargetResource.LockingDroneID != droneModel.View.GetInstanceID())
         {
-            if (dronesList[i].TargetResource == null)
-                continue;
+            droneModel.ResetTarget();
+            droneModel.SetAwaitState();
+            return true;
+        }
 
-            if (dronesList[i].TargetResource.IsCollectig &&
-                dronesList[i].TargetResource.LockingDroneID != dronesList[i].View.GetInstanceID())
-            {
-                dronesList[i].ResetTarget();
-            }
+        return false;
+    }
+
+    private void TryStartCollecting(DroneModel droneModel)
+    {
+        var sqrDistance = (droneModel.TargetResource.Transform.position - droneModel.View.Transform.position).sqrMagnitude;
+        var sqrStopingDistance = droneModel.View.Agent.stoppingDistance * droneModel.View.Agent.stoppingDistance;
+
+        Debug.Log(sqrStopingDistance.ToString());
+
+        if (sqrDistance <= sqrStopingDistance)
+        {
+            droneModel.SetCollectingState();
+        }
+    }
+
+    private void CollectResource(DroneModel droneModel)
+    {
+        droneModel.CollectingTime += Time.deltaTime;
+
+        if(droneModel.CollectingTime >= _gameConfig.CollectResourceTime)
+        {
+            droneModel.SetReturnState();
+            droneModel.View.Agent.SetDestination(droneModel.Fraction.FractonBase.ResourceDeliveryTransform.position);
+        }
+    }
+
+    private void TryHandOver(DroneModel droneModel)
+    {
+        var distance = droneModel.View.Agent.remainingDistance;
+
+        if(distance <= droneModel.View.Agent.stoppingDistance)
+        {
+            droneModel.HandOverResource();
         }
     }
 }

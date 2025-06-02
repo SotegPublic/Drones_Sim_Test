@@ -19,7 +19,7 @@ public class ResourceView : MonoBehaviour, IPoolableObject
     public GameObject GameObject => _gameObject;
     public Transform Transform => _transform;
     public GridCell Cell => _cell;
-    public bool IsCollectig => _isCollectig;
+    public bool IsCollecting => _isCollectig;
     public int LockingDroneID => _lockingDroneID;
 
     public void SetPlacementCell(GridCell cell) => _cell = cell;
