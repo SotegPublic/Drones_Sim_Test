@@ -19,17 +19,19 @@ public class DroneSpawner : IDroneSpawner
         var drone = await _pool.GetObjectFromPool(_refsHolder.DroneRef);
         var droneView = drone.GetComponent<DroneView>();
 
-        droneView.SetFraction(fraction);
+        var droneModel = new DroneModel(droneView);
 
-        droneView.Agent.avoidancePriority = avoidancePriority + 1;
-        droneView.Agent.speed = speed;
+        droneModel.SetFraction(fraction);
+
+        droneModel.View.Agent.avoidancePriority = avoidancePriority + 1;
+        droneModel.View.Agent.speed = speed;
 
         var position = fraction.FractonBase.SpawnTransform.position;
-        droneView.Transform.position = position;
+        droneModel.View.Transform.position = position;
 
-        droneView.Agent.enabled = true;
-        droneView.Agent.SetDestination(position + Vector3.forward); //todo - костыль для срабатывания avoidancePriority, лучше в систему спавна по гриду вокруг базы
+        droneModel.View.Agent.enabled = true;
+        droneModel.View.Agent.SetDestination(position + Vector3.forward); //todo - костыль для срабатывания avoidancePriority, лучше в систему спавна по гриду вокруг базы
 
-        _dronesHolder.AddDrone(droneView);
+        _dronesHolder.AddDrone(droneModel);
     }
 }

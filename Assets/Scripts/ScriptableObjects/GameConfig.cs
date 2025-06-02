@@ -3,10 +3,14 @@
 [CreateAssetMenu(fileName = nameof(GameConfig), menuName = "CustomSO/" + nameof(GameConfig), order = 1)]
 public class GameConfig : ScriptableObject
 {
+    [Header("Drones")]
     [SerializeField] private int _startDronesCount;
     [SerializeField] private int _maxDronesCount;
     [SerializeField] private float _startDronesSpeed;
+
+    [Header("Resources")]
     [SerializeField] private float _collectResourceTime;
+    [SerializeField] private float _lockResourceDistance;
     [SerializeField] private int _maxResourcesCount;
     [SerializeField] private float _spawnResourcesFrequency;
 
@@ -16,5 +20,5 @@ public class GameConfig : ScriptableObject
     public float CollectResourceTime => _collectResourceTime;
     public int MaxResourcesCount => _maxResourcesCount;
     public float SpawnResourcesFrequency => _spawnResourcesFrequency;
+    public float LockResourceDistance => _lockResourceDistance;
 }
-

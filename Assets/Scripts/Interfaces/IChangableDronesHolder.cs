@@ -1,5 +1,5 @@
 ﻿public interface IChangableDronesHolder : IDronesHolder
 {
-    public void AddDrone(DroneView drone);
-    public void RemoveDrone(DroneView drone);
+    public void AddDrone(DroneModel drone);
+    public void RemoveDrone(DroneModel drone);
 }

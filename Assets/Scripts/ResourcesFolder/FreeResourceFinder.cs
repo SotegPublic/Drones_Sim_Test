@@ -1,5 +1,4 @@
-﻿using System.Buffers;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class FreeResourceFinder : IFreeResourceFinder
@@ -24,21 +23,20 @@ public class FreeResourceFinder : IFreeResourceFinder
         return false;
     }
 
-    public (ResourceView resource, DroneView resetingDrone) GetNearestFreeResource(Vector3 startPosition, Fraction fraction)
+    public (ResourceView resource, DroneModel resetingDrone) GetNearestFreeResource(Vector3 startPosition, Fraction fraction)
     {
-        var freeResources = ArrayPool<ResourceView>.Shared.Rent(_resourcesHolder.Resources.Count);
-
-        var count = GetFreeResources(ref freeResources);
-
         var fractionDrones = _dronesHolder.Drones[fraction];
 
         var minDistance = float.MaxValue;
-        DroneView resetingDrone = null;
+        DroneModel resetingDrone = null;
         ResourceView resource = null;
 
-        for (int i = 0; i < count; i++)
+        for (int i = 0; i < _resourcesHolder.Resources.Count; i++)
         {
-            var freeResource = freeResources[i];
+            if (_resourcesHolder.Resources[i].IsCollectig)
+                continue;
+
+            var freeResource = _resourcesHolder.Resources[i];
             var distance = (freeResource.Transform.position - startPosition).sqrMagnitude;
 
             if (distance >= minDistance)
@@ -48,7 +46,7 @@ public class FreeResourceFinder : IFreeResourceFinder
 
             if (TryGetDroneWithSameTarget(freeResource, fractionDrones, out var drone))
             {
-                var comparedDistance = (freeResource.Transform.position - drone.Transform.position).sqrMagnitude;
+                var comparedDistance = (freeResource.Transform.position - drone.View.Transform.position).sqrMagnitude;
 
                 if (distance < comparedDistance)
                 {
@@ -62,15 +60,12 @@ public class FreeResourceFinder : IFreeResourceFinder
                 minDistance = distance;
                 resource = freeResource;
             }
-
-
         }
 
-        ArrayPool<ResourceView>.Shared.Return(freeResources);
         return (resource, resetingDrone);
     }
 
-    private bool TryGetDroneWithSameTarget(ResourceView resource, List<DroneView> drones, out DroneView drone)
+    private bool TryGetDroneWithSameTarget(ResourceView resource, List<DroneModel> drones, out DroneModel drone)
     {
         for(int i = 0; i < drones.Count; i++)
         {
@@ -86,21 +81,5 @@ public class FreeResourceFinder : IFreeResourceFinder
 
         drone = null;
         return false;
-    }
-
-    private int GetFreeResources(ref ResourceView[] freeResources)
-    {
-        var count = 0;
-
-        for (int i = 0; i < _resourcesHolder.Resources.Count; i++)
-        {
-            if (!_resourcesHolder.Resources[i].IsCollectig)
-            {
-                freeResources[count] = _resourcesHolder.Resources[i];
-                count++;
-            }
-        }
-
-        return count;
     }
 }

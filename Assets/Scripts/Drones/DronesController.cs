@@ -1,24 +1,25 @@
-﻿using System.Buffers;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 public class DronesController : IUpdatableController, IInitableController
 {
     private IDronesHolder _dronesHolder;
     private IFreeResourceFinder _finder;
+    private GameConfig _gameConfig;
 
     private bool _isActive;
-    private int _maxDronesCount;
+    private float _sqrLockDistance;
 
     public DronesController(IDronesHolder dronesHolder, GameConfig gameConfig, IFreeResourceFinder finder)
     {
         _dronesHolder = dronesHolder;
-        _maxDronesCount = gameConfig.MaxDronesCount;
+        _gameConfig = gameConfig;
         _finder = finder;
     }
 
     public void Init()
     {
         _isActive = true;
+        _sqrLockDistance = _gameConfig.LockResourceDistance * _gameConfig.LockResourceDistance;
     }
 
     public void Update()
@@ -26,15 +27,15 @@ public class DronesController : IUpdatableController, IInitableController
         if (!_isActive)
             return;
 
-        foreach (var drones in _dronesHolder.Drones)
+        foreach (var drones in _dronesHolder.Drones.Values)
         {
-            SetTargetResources(drones.Value);
-            LockResources(drones.Key, drones.Value);
-            ResetLockedResources(drones.Key, drones.Value);
+            SetTargetResources(drones);
+            LockResources(drones);
+            ResetLockedResources(drones);
         }
     }
 
-    private void SetTargetResources(List<DroneView> dronesList)
+    private void SetTargetResources(List<DroneModel> dronesList)
     {
         if (!_finder.IsHaveFreeResources())
             return;
@@ -44,7 +45,7 @@ public class DronesController : IUpdatableController, IInitableController
             if (dronesList[i].TargetResource != null)
                 continue;
 
-            var tuple = _finder.GetNearestFreeResource(dronesList[i].Transform.position, dronesList[i].Fraction);
+            var tuple = _finder.GetNearestFreeResource(dronesList[i].View.Transform.position, dronesList[i].Fraction);
 
             if (tuple.resource == null)
                 continue;
@@ -52,47 +53,42 @@ public class DronesController : IUpdatableController, IInitableController
             if (tuple.resetingDrone != null)
                 tuple.resetingDrone.ResetTarget();
 
-
-            dronesList[i].Agent.SetDestination(tuple.resource.Cell.Position);
+            dronesList[i].View.Agent.SetDestination(tuple.resource.Cell.Position);
             dronesList[i].SetTarget(tuple.resource);
         }
     }
 
-    private void LockResources(Fraction fraction, List<DroneView> dronesList)
+    private void LockResources(List<DroneModel> dronesList)
     {
-        var dronesWithTarget = ArrayPool<DroneView>.Shared.Rent(dronesList.Count);
-        var count = _dronesHolder.GetDronesWithTarget(fraction, ref dronesWithTarget);
-
-        for (int i = 0; i < count; i++)
+        for (int i = 0; i < dronesList.Count; i++)
         {
-            var distance = (dronesWithTarget[i].TargetResource.Transform.position - dronesWithTarget[i].Transform.position).magnitude;
+            if (dronesList[i].TargetResource == null)
+                continue;
 
-            if (distance < 1f)
+            var sqrDistance = (dronesList[i].TargetResource.Transform.position - dronesList[i].View.Transform.position).sqrMagnitude;
+
+            if (sqrDistance < _sqrLockDistance)
             {
-                if (!dronesWithTarget[i].TargetResource.IsCollectig)
+                if (!dronesList[i].TargetResource.IsCollectig)
                 {
-                    dronesWithTarget[i].TargetResource.Lock(dronesWithTarget[i].GetInstanceID());
+                    dronesList[i].TargetResource.Lock(dronesList[i].View.GetInstanceID());
                 }
             }
         }
-
-        ArrayPool<DroneView>.Shared.Return(dronesWithTarget);
     }
 
-    private void ResetLockedResources(Fraction fraction, List<DroneView> dronesList)
+    private void ResetLockedResources(List<DroneModel> dronesList)
     {
-        var dronesWithTarget = ArrayPool<DroneView>.Shared.Rent(dronesList.Count);
-        var count = _dronesHolder.GetDronesWithTarget(fraction, ref dronesWithTarget);
-
-        for (int i = 0; i < count; i++)
+        for (int i = 0; i < dronesList.Count; i++)
         {
-            if (dronesWithTarget[i].TargetResource.IsCollectig &&
-                dronesWithTarget[i].TargetResource.LockingDroneID != dronesWithTarget[i].GetInstanceID())
+            if (dronesList[i].TargetResource == null)
+                continue;
+
+            if (dronesList[i].TargetResource.IsCollectig &&
+                dronesList[i].TargetResource.LockingDroneID != dronesList[i].View.GetInstanceID())
             {
-                dronesWithTarget[i].ResetTarget();
+                dronesList[i].ResetTarget();
             }
         }
-
-        ArrayPool<DroneView>.Shared.Return(dronesWithTarget);
     }
 }
