@@ -9,10 +9,12 @@ public class DroneModel
     private DroneView _view;
     private DroneStateType _currentState;
 
-    public DroneModel(DroneView droneView)
+    public DroneModel(DroneView droneView, Fraction fraction)
     {
         _view = droneView;
         _currentState = DroneStateType.AwaitTarget;
+        _fraction = fraction;
+        _view.SetMaterial(fraction.FractionMaterial);
     }
 
     public float CollectingTime;
@@ -21,6 +23,11 @@ public class DroneModel
     public ResourceView TargetResource => _targetRecource;
     public DroneView View => _view;
     public DroneStateType State => _currentState;
+
+    private void SetTarget(ResourceView targetResource)
+    {
+        _targetRecource = targetResource;
+    }
 
     public void SetAwaitState()
     {
@@ -47,27 +54,17 @@ public class DroneModel
         _targetRecource = null;
     }
 
-    public void SetFraction(Fraction fraction)
+    public void SetHandOverState()
     {
-        _fraction = fraction;
-        _view.SetMaterial(fraction.FractionMaterial);
-    }
-
-    public void HandOverResource()
-    {
+        _currentState = DroneStateType.HandOver;
         _fraction.GetResource();
-        _currentState = DroneStateType.None;
-
-        var currentScale = _view.Transform.localScale;
-        var sequence = DOTween.Sequence().
-            Append(_view.Transform.DOScale(currentScale * 1.4f, 0.1f)).
-            Append(_view.Transform.DOScale(currentScale, 0.1f)).
-            OnComplete(GoToSpawnPoint);
     }
 
-    private void GoToSpawnPoint()
+    public void ResetTarget()
     {
-        SetAwaitState();
+        _targetRecource = null;
+        _view.Agent.ResetPath();
+        _view.Agent.velocity = Vector3.zero;
     }
 
     public void Clear()
@@ -81,18 +78,6 @@ public class DroneModel
         _view = null;
         _currentState = DroneStateType.None;
     }
-
-    public void ResetTarget()
-    {
-        _targetRecource = null;
-        _view.Agent.ResetPath();
-        _view.Agent.velocity = Vector3.zero;
-    }
-
-    private void SetTarget(ResourceView targetResource)
-    {
-        _targetRecource = targetResource;
-    }
 }
 
 public enum DroneStateType
@@ -101,5 +86,6 @@ public enum DroneStateType
     AwaitTarget = 1,
     GoToTarget = 2,
     CollectTarget = 3,
-    Return = 4
+    Return = 4,
+    HandOver = 5
 }

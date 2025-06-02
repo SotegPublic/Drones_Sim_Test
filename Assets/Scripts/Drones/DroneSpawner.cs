@@ -19,9 +19,7 @@ public class DroneSpawner : IDroneSpawner
         var drone = await _pool.GetObjectFromPool(_refsHolder.DroneRef);
         var droneView = drone.GetComponent<DroneView>();
 
-        var droneModel = new DroneModel(droneView);
-
-        droneModel.SetFraction(fraction);
+        var droneModel = new DroneModel(droneView, fraction);
 
         droneModel.View.Agent.avoidancePriority = avoidancePriority + 1;
         droneModel.View.Agent.speed = speed;

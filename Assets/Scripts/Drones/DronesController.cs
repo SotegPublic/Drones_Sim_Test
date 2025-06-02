@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DG.Tweening;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -59,6 +60,7 @@ public class DronesController : IUpdatableController, IInitableController
             case DroneStateType.Return:
                 TryHandOver(droneModel);
                 break;
+            case DroneStateType.HandOver:
             case DroneStateType.None:
             default:
                 break;
@@ -116,8 +118,6 @@ public class DronesController : IUpdatableController, IInitableController
         var sqrDistance = (droneModel.TargetResource.Transform.position - droneModel.View.Transform.position).sqrMagnitude;
         var sqrStopingDistance = droneModel.View.Agent.stoppingDistance * droneModel.View.Agent.stoppingDistance;
 
-        Debug.Log(sqrStopingDistance.ToString());
-
         if (sqrDistance <= sqrStopingDistance)
         {
             droneModel.SetCollectingState();
@@ -141,7 +141,13 @@ public class DronesController : IUpdatableController, IInitableController
 
         if(distance <= droneModel.View.Agent.stoppingDistance)
         {
-            droneModel.HandOverResource();
+            droneModel.SetHandOverState();
+
+            var currentScale = droneModel.View.Transform.localScale;
+            var sequence = DOTween.Sequence().
+                Append(droneModel.View.Transform.DOScale(currentScale * 1.4f, 0.1f)).
+                Append(droneModel.View.Transform.DOScale(currentScale, 0.1f)).
+                OnComplete(droneModel.SetAwaitState);
         }
     }
 }
