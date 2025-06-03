@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74730c9da670cf14b8556301beb98d14, type: 3}
   m_Name: DronesMoveConfig
   m_EditorClassIdentifier: 
-  _reactDistance: 2
-  _reactForce: 1
+  _reactForce: 2
+  _reactDistance: 1
   _reactSpeedModifier: 1.2
   _handOverDistance: 0.8
   _collectingDistance: 0.8

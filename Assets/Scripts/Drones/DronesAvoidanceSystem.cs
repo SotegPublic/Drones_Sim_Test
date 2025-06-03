@@ -45,7 +45,7 @@ public class DronesAvoidanceSystem : IUpdatableController
                     droneModel.View.Agent.velocity = Vector3.Lerp(
                         a: droneModel.View.Agent.desiredVelocity,
                         b: -dir.normalized * droneModel.View.Agent.speed * _moveConfig.ReactSpeedModifier,
-                        t: Mathf.Clamp01((_moveConfig.ReactForce - dir.magnitude) / _moveConfig.ReactDistance)
+                        t: Mathf.Clamp01((_moveConfig.ReactDistance - dir.magnitude) / _moveConfig.ReactForce)
                         );
                 }
             }
