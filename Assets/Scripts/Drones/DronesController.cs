@@ -107,7 +107,6 @@ public class DronesController : IUpdatableController, IInitableController, IDisp
     private void RemoveDrone(DroneModel droneModel)
     {
         var view = droneModel.View;
-        var fraction = droneModel.Fraction;
 
         _dronesHolder.RemoveDrone(droneModel);
         droneModel.Clear();
