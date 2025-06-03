@@ -10,19 +10,23 @@ public class DronesController : IUpdatableController, IInitableController, IDisp
     private IFreeResourceFinder _finder;
     private IMainUINotifier _uiNotifier;
     private GameConfig _gameConfig;
+    private DronesMoveConfig _moveConfig;
 
     private bool _isActive;
     private float _sqrLockDistance;
     private float _droneSpeed;
     private int _dronesCount;
+    private float _sqrCollectingDistance;
 
-    public DronesController(IChangableDronesHolder dronesHolder, GameConfig gameConfig, IFreeResourceFinder finder, IMainUINotifier uiNotifier, IDroneSpawner droneSpawner)
+    public DronesController(IChangableDronesHolder dronesHolder, GameConfig gameConfig, IFreeResourceFinder finder, IMainUINotifier uiNotifier,
+        IDroneSpawner droneSpawner, DronesMoveConfig moveConfig)
     {
         _dronesHolder = dronesHolder;
         _gameConfig = gameConfig;
         _finder = finder;
         _uiNotifier = uiNotifier;
         _droneSpawner = droneSpawner;
+        _moveConfig = moveConfig;
 
         _droneSpeed = gameConfig.StartDronesSpeed;
         _dronesCount = gameConfig.StartDronesCount;
@@ -41,7 +45,8 @@ public class DronesController : IUpdatableController, IInitableController, IDisp
     public void Init()
     {
         _isActive = true;
-        _sqrLockDistance = _gameConfig.LockResourceDistance * _gameConfig.LockResourceDistance;
+        _sqrLockDistance = _moveConfig.LockResourceDistance * _moveConfig.LockResourceDistance;
+        _sqrCollectingDistance = _moveConfig.CollectingDistance * _moveConfig.CollectingDistance;
     }
 
     public void Update()
@@ -187,9 +192,8 @@ public class DronesController : IUpdatableController, IInitableController, IDisp
     private void TryStartCollecting(DroneModel droneModel)
     {
         var sqrDistance = (droneModel.TargetResource.Transform.position - droneModel.View.Transform.position).sqrMagnitude;
-        var sqrStopingDistance = droneModel.View.Agent.stoppingDistance * droneModel.View.Agent.stoppingDistance;
 
-        if (sqrDistance <= sqrStopingDistance)
+        if (sqrDistance <= _sqrCollectingDistance)
         {
             droneModel.SetCollectingState();
         }
@@ -210,7 +214,7 @@ public class DronesController : IUpdatableController, IInitableController, IDisp
     {
         var distance = droneModel.View.Agent.remainingDistance;
 
-        if(distance <= droneModel.View.Agent.stoppingDistance)
+        if(distance <= _moveConfig.HandOverDistance)
         {
             droneModel.SetHandOverState();
 

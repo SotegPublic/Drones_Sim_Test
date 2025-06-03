@@ -12,7 +12,6 @@ public class GameConfig : ScriptableObject
 
     [Header("Resources")]
     [SerializeField] private float _collectResourceTime;
-    [SerializeField] private float _lockResourceDistance;
     [SerializeField] private int _maxResourcesCount;
     [SerializeField] private float _spawnResourcesSpeed;
 
@@ -23,6 +22,5 @@ public class GameConfig : ScriptableObject
     public float CollectResourceTime => _collectResourceTime;
     public int MaxResourcesCount => _maxResourcesCount;
     public float SpawnResourcesSpeed => _spawnResourcesSpeed;
-    public float LockResourceDistance => _lockResourceDistance;
     public bool IsDrawPath => _isDrawPath;
 }
