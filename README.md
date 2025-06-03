@@ -3,6 +3,7 @@
 Для реализации использоовались Zenject, UniTask и DOTween (ради целой одной анимации возврата ресурса).
 - [FSM](https://github.com/SotegPublic/Drones_Sim_Test/tree/main/Assets/Scripts/Infrastructure/GameStateMachine) - стейт машина, управляющая состояниями симуляции
 - [Drones Controller](https://github.com/SotegPublic/Drones_Sim_Test/blob/main/Assets/Scripts/Drones/DronesController.cs) - контроллер управления дронами, управление реализовано через систему состояний дрона (упрощенная стейт машина).
+- [Avoidance](https://github.com/SotegPublic/Drones_Sim_Test/blob/main/Assets/Scripts/Drones/DronesAvoidanceSystem.cs) - система избегания столкновений
 - [Resources controller](https://github.com/SotegPublic/Drones_Sim_Test/blob/main/Assets/Scripts/ResourcesFolder/ResourcesController.cs) - система управления ресурсами (спавн, удаление). Спавн ресурсов происходит по гриду, который создается на этапе [инициализации](https://github.com/SotegPublic/Drones_Sim_Test/blob/main/Assets/Scripts/Infrastructure/GameStateMachine/States/GamePreparationState.cs) симуляции
 - [Pool System](https://github.com/SotegPublic/Drones_Sim_Test/tree/main/Assets/Scripts/Infrastructure/Pool) - для спавна дронов и ресурсов используется система пулинга
 - [Path Drawler](https://github.com/SotegPublic/Drones_Sim_Test/blob/main/Assets/Scripts/Drones/DrawDronePathController.cs) - для отрисовки пути используются Line Renderer на каждом агенте, которыми сверху управляет глобальный контроллер.
