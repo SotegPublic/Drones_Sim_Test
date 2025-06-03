@@ -110,8 +110,6 @@ public class DronesController : IUpdatableController, IInitableController, IDisp
         var fraction = droneModel.Fraction;
 
         _dronesHolder.RemoveDrone(droneModel);
-
-        fraction.DronesPriorities.Remove(droneModel.View.Agent.avoidancePriority);
         droneModel.Clear();
 
         _droneSpawner.DespawnDrone(view);
@@ -123,23 +121,9 @@ public class DronesController : IUpdatableController, IInitableController, IDisp
         {
             for (int i = 0; i < count; i++)
             {
-                var priority = GetPriority(fraction);
-                fraction.DronesPriorities.Add(priority);
-
-                _droneSpawner.SpawnDrone(fraction, priority, _droneSpeed).Forget();
+                _droneSpawner.SpawnDrone(fraction, _droneSpeed).Forget();
             }
         }
-    }
-
-    private int GetPriority(Fraction fraction)
-    {
-        int freePriority = 0;
-        while (fraction.DronesPriorities.Contains(freePriority))
-        {
-            freePriority++;
-        }
-
-        return freePriority;
     }
 
     private void ChangeDronesSpeed(float speed)

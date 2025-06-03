@@ -15,14 +15,13 @@ public class DroneSpawner : IDroneSpawner
         _dronesHolder = dronesHolder;
     }
 
-    public async UniTask SpawnDrone(Fraction fraction, int avoidancePriority, float speed)
+    public async UniTask SpawnDrone(Fraction fraction, float speed)
     {
         var drone = await _pool.GetObjectFromPool(_refsHolder.DroneRef);
         var droneView = drone.GetComponent<DroneView>();
 
         var droneModel = new DroneModel(droneView, fraction);
 
-        droneModel.View.Agent.avoidancePriority = avoidancePriority;
         droneModel.View.Agent.speed = speed;
 
         var position = fraction.FractonBase.SpawnTransform.position;

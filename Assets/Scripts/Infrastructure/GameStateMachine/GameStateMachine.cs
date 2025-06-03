@@ -59,18 +59,12 @@ public class GameStateMachine : IGameStateMachine, IDisposable
 
     public void Update()
     {
-        foreach(var state in _gameStates.Values)
-        {
-            state.Update();
-        }
+        _gameStates[_gameStateHolder.GetCurrentGameState()].Update();
     }
 
     public void LateUpdate()
     {
-        foreach (var state in _gameStates.Values)
-        {
-            state.LateUpdate();
-        }
+        _gameStates[_gameStateHolder.GetCurrentGameState()].LateUpdate();
     }
 
     public void Dispose()

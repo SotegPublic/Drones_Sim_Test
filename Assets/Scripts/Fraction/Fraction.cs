@@ -14,8 +14,6 @@ public class Fraction: IEquatable<Fraction>
 
     private int _resourcesCount;
 
-
-    public HashSet<int> DronesPriorities;
     public int ResourcesCount => _resourcesCount;
     public BaseView FractonBase => _fractonBase;
     public Material FractionMaterial => _fractionMaterial;
