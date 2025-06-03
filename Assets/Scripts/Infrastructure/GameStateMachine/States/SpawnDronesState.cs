@@ -35,7 +35,8 @@ public class SpawnDronesState : BaseState, IInitializable
         {
             for(int j = 0; j < _fractionsHolder.Fractions.Length; j++)
             {
-                _tasks.Add(_droneSpawner.SpawnDrones(_fractionsHolder.Fractions[j], i, _gameConfig.StartDronesSpeed));
+                _tasks.Add(_droneSpawner.SpawnDrone(_fractionsHolder.Fractions[j], i, _gameConfig.StartDronesSpeed));
+                _fractionsHolder.Fractions[j].DronesPriorities.Add(i);
             }
 
             await UniTask.Delay(200);

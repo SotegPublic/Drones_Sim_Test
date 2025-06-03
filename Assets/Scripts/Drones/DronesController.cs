@@ -1,7 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DronesController : IUpdatableController, IInitableController, IDisposable
@@ -15,7 +14,7 @@ public class DronesController : IUpdatableController, IInitableController, IDisp
     private bool _isActive;
     private float _sqrLockDistance;
     private float _droneSpeed;
-    private int _droneCount;
+    private int _dronesCount;
 
     public DronesController(IChangableDronesHolder dronesHolder, GameConfig gameConfig, IFreeResourceFinder finder, IMainUINotifier uiNotifier, IDroneSpawner droneSpawner)
     {
@@ -26,7 +25,7 @@ public class DronesController : IUpdatableController, IInitableController, IDisp
         _droneSpawner = droneSpawner;
 
         _droneSpeed = gameConfig.StartDronesSpeed;
-        _droneCount = gameConfig.StartDronesCount;
+        _dronesCount = gameConfig.StartDronesCount;
 
         _uiNotifier.OnDroneSpeedChange += ChangeDronesSpeed;
         _uiNotifier.OnDronesCountChange += ChangeDronesCount;
@@ -34,84 +33,14 @@ public class DronesController : IUpdatableController, IInitableController, IDisp
 
     private void ChangeDronesCount(int newCont)
     {
-        if(newCont == _droneCount) return;
+        if(newCont == _dronesCount) return;
 
-        if(_droneCount < newCont)
-        {
-            SpawnNewDrones(newCont - _droneCount);
-        }
-        else
-        {
-            RemoveDrones(_droneCount - newCont);
-        }
-
-        _droneCount = newCont;
-    }
-
-    private void RemoveDrones(int count)
-    {
-        foreach (var drones in _dronesHolder.Drones.Values)
-        {
-            RemoveDronesInFraction(drones, count);
-        }
-    }
-
-    private void RemoveDronesInFraction(List<DroneModel> drones, int count)
-    {
-        var remainigCount = count;
-
-        while (remainigCount > 0)
-        {
-            for(int i = drones.Count - 1; i >= 0; i--)
-            {
-                if (drones[i].State != DroneStateType.HandOver && remainigCount > 0)
-                {
-                    var view = drones[i].View;
-                    var model = drones[i];
-
-                    _dronesHolder.RemoveDrone(model);
-                    model.Clear();
-                    _droneSpawner.DespawnDrone(view);
-                    remainigCount--;
-
-                    if (remainigCount == 0)
-                        break;
-                }
-            }
-        }
-    }
-
-    private void SpawnNewDrones(int count)
-    {
-        foreach(var fraction in _dronesHolder.Drones.Keys)
-        {
-            var priority = _droneCount;
-
-            for (int i = 0; i < count; i++)
-            {
-                _droneSpawner.SpawnDrones(fraction, priority, _droneSpeed);
-                priority++;
-            }
-        }
-    }
-
-    private void ChangeDronesSpeed(float speed)
-    {
-        _droneSpeed = speed;
-
-        foreach(var drones in _dronesHolder.Drones.Values)
-        {
-            for(int i = 0; i < drones.Count; i++)
-            {
-                drones[i].View.Agent.speed = speed;
-            }
-        }
+        _dronesCount = newCont;
     }
 
     public void Init()
     {
         _isActive = true;
-
         _sqrLockDistance = _gameConfig.LockResourceDistance * _gameConfig.LockResourceDistance;
     }
 
@@ -122,7 +51,12 @@ public class DronesController : IUpdatableController, IInitableController, IDisp
 
         foreach (var drones in _dronesHolder.Drones.Values)
         {
-            for(int i = 0; i < drones.Count; i++)
+            if(drones.Count < _dronesCount)
+            {
+                SpawnNewDrones(_dronesCount - drones.Count);
+            }
+            
+            for(int i = drones.Count - 1; i >= 0; i--)
             {
                 ControllDrone(drones[i]);
             }
@@ -134,6 +68,12 @@ public class DronesController : IUpdatableController, IInitableController, IDisp
         switch (droneModel.State)
         {
             case DroneStateType.AwaitTarget:
+                if (IsNeedToRemove(droneModel.Fraction))
+                {
+                    RemoveDrone(droneModel);
+                    break;
+                }
+
                 SetTargetResource(droneModel);
                 break;
             case DroneStateType.GoToTarget:
@@ -154,6 +94,64 @@ public class DronesController : IUpdatableController, IInitableController, IDisp
             case DroneStateType.None:
             default:
                 break;
+        }
+    }
+
+    private bool IsNeedToRemove(Fraction fraction)
+    {
+        var fractionDronesCount = _dronesHolder.Drones[fraction].Count;
+
+        return _dronesCount < fractionDronesCount;
+    }
+
+    private void RemoveDrone(DroneModel droneModel)
+    {
+        var view = droneModel.View;
+        var fraction = droneModel.Fraction;
+
+        _dronesHolder.RemoveDrone(droneModel);
+
+        fraction.DronesPriorities.Remove(droneModel.View.Agent.avoidancePriority);
+        droneModel.Clear();
+
+        _droneSpawner.DespawnDrone(view);
+    }
+
+    private void SpawnNewDrones(int count)
+    {
+        foreach (var fraction in _dronesHolder.Drones.Keys)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                var priority = GetPriority(fraction);
+                fraction.DronesPriorities.Add(priority);
+
+                _droneSpawner.SpawnDrone(fraction, priority, _droneSpeed).Forget();
+            }
+        }
+    }
+
+    private int GetPriority(Fraction fraction)
+    {
+        int freePriority = 0;
+        while (fraction.DronesPriorities.Contains(freePriority))
+        {
+            freePriority++;
+        }
+
+        return freePriority;
+    }
+
+    private void ChangeDronesSpeed(float speed)
+    {
+        _droneSpeed = speed;
+
+        foreach (var drones in _dronesHolder.Drones.Values)
+        {
+            for (int i = 0; i < drones.Count; i++)
+            {
+                drones[i].View.Agent.speed = speed;
+            }
         }
     }
 

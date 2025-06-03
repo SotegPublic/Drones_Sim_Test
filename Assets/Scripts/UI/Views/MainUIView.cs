@@ -44,7 +44,7 @@ public class MainUIView : MonoBehaviour
         _dronesSpeedSlider.minValue = 1;
         _dronesSpeedSlider.value = gameConfig.StartDronesSpeed;
 
-        _resourceGenerateSpeed.text = Math.Round(gameConfig.SpawnResourcesFrequency, 1).ToString();
+        _resourceGenerateSpeed.text = Math.Round(gameConfig.SpawnResourcesSpeed, 1).ToString();
         _showPathToggle.isOn = false;
     }
 

@@ -12,7 +12,7 @@ public class ResourcesController : IDisposable, IUpdatableController, IInitableC
 
     private float _currentTime;
     private int _maxResourcesCount;
-    private float _spawnResourcesFrequency;
+    private float _spawnResourcesSpeed;
 
     public ResourcesController(IGameObjectsPool pool, GameConfig gameConfig, IResourcesGridHolder gridHolder, AssetRefsHolderConfig assetRefsHolder,
         IChangableResourcesHolder resourcesHolder, IMainUINotifier uiNotifier)
@@ -24,7 +24,7 @@ public class ResourcesController : IDisposable, IUpdatableController, IInitableC
         _uiNotifier = uiNotifier;
 
         _maxResourcesCount = gameConfig.MaxResourcesCount;
-        _spawnResourcesFrequency = gameConfig.SpawnResourcesFrequency;
+        _spawnResourcesSpeed = gameConfig.SpawnResourcesSpeed;
 
         _uiNotifier.OnGenerationSpeedChange += ChangeSpawnResourcesFrequency;
     }
@@ -37,7 +37,7 @@ public class ResourcesController : IDisposable, IUpdatableController, IInitableC
 
     public void ChangeSpawnResourcesFrequency(float spawnResourcesFrequency)
     {
-        _spawnResourcesFrequency = spawnResourcesFrequency;
+        _spawnResourcesSpeed = spawnResourcesFrequency;
     }
 
     public void Update()
@@ -47,7 +47,7 @@ public class ResourcesController : IDisposable, IUpdatableController, IInitableC
 
         _currentTime += Time.deltaTime;
 
-        if (_currentTime >= _spawnResourcesFrequency)
+        if (_currentTime >= (1/_spawnResourcesSpeed))
         {
             TrySpawnResource();
 

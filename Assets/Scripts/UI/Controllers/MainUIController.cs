@@ -1,4 +1,6 @@
 using System;
+using TMPro;
+using UnityEngine;
 using Zenject;
 
 public class MainUIController : IInitializable, IDisposable, IMainUINotifier
@@ -23,7 +25,6 @@ public class MainUIController : IInitializable, IDisposable, IMainUINotifier
     {
         _view.DronesCountSlider.OnSliderPointerUp += WhenDroneCountChange;
         _view.DronesSpeedSlider.OnSliderPointerUp += WhenDroneSpeedChange;
-        _view.ResourceGenerateSpeed.onSubmit.AddListener(WhenGenerationSpeedChange);
         _view.ResourceGenerateSpeed.onEndEdit.AddListener(WhenGenerationSpeedChange);
         _view.ShowPathToggle.onValueChanged.AddListener(WhenPathToggleChange);
 
@@ -48,10 +49,34 @@ public class MainUIController : IInitializable, IDisposable, IMainUINotifier
 
     private void WhenGenerationSpeedChange(string speedStr)
     {
-        if(float.TryParse(speedStr, out var speed))
+        if (float.TryParse(speedStr, out var speed))
         {
-            OnGenerationSpeedChange?.Invoke(speed);
+            var roundedSpeed = (float)Math.Round(speed,1);
+
+            _view.ResourceGenerateSpeed.text = roundedSpeed.ToString();
+            PlaceCaret(_view.ResourceGenerateSpeed);
+            
+            OnGenerationSpeedChange?.Invoke(roundedSpeed);
         }
+    }
+
+    private void PlaceCaret(TMP_InputField inputField)
+    {
+        var textRect = inputField.textComponent.GetComponent<RectTransform>();
+        var caret = inputField.GetComponentInChildren<TMP_SelectionCaret>();
+
+        textRect.offsetMin = Vector2.zero;
+        textRect.offsetMax = Vector2.zero;
+
+        if (caret != null)
+        {
+            var caretRect = caret.GetComponent<RectTransform>();
+            caretRect.offsetMin = Vector2.zero;
+            caretRect.offsetMax = Vector2.zero;
+        }
+
+        inputField.caretPosition = 0;
+        inputField.ForceLabelUpdate();
     }
 
     private void WhenDroneSpeedChange(float speed)

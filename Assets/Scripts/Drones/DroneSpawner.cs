@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using System;
 using UnityEngine;
 
 public class DroneSpawner : IDroneSpawner
@@ -14,14 +15,14 @@ public class DroneSpawner : IDroneSpawner
         _dronesHolder = dronesHolder;
     }
 
-    public async UniTask SpawnDrones(Fraction fraction, int avoidancePriority, float speed)
+    public async UniTask SpawnDrone(Fraction fraction, int avoidancePriority, float speed)
     {
         var drone = await _pool.GetObjectFromPool(_refsHolder.DroneRef);
         var droneView = drone.GetComponent<DroneView>();
 
         var droneModel = new DroneModel(droneView, fraction);
 
-        droneModel.View.Agent.avoidancePriority = avoidancePriority + 1;
+        droneModel.View.Agent.avoidancePriority = avoidancePriority;
         droneModel.View.Agent.speed = speed;
 
         var position = fraction.FractonBase.SpawnTransform.position;
@@ -32,7 +33,6 @@ public class DroneSpawner : IDroneSpawner
 
         _dronesHolder.AddDrone(droneModel);
     }
-
     public void DespawnDrone(DroneView drone)
     {
         _pool.ReturnViewToPool(drone);
