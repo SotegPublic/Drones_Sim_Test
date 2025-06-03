@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 597145678977222956}
   - component: {fileID: -6088026174503565454}
   - component: {fileID: -3126777252649606069}
-  - component: {fileID: 1650756849535417160}
   m_Layer: 0
   m_Name: DronePref
   m_TagString: Untagged
@@ -79,7 +78,7 @@ MonoBehaviour:
   _transform: {fileID: 5704077154734162381}
   _meshRenderer: {fileID: 7257809424750028352}
   _agent: {fileID: 597145678977222956}
-  _pathDrawler: {fileID: 1650756849535417160}
+  _lineRenderer: {fileID: -3126777252649606069}
 --- !u!120 &-3126777252649606069
 LineRenderer:
   serializedVersion: 2
@@ -182,19 +181,6 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
---- !u!114 &1650756849535417160
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4070225422221616482}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9eeea148c66e9d349b254dbc7fe25c22, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _lineRenderer: {fileID: 0}
 --- !u!1 &6909296570730021593
 GameObject:
   m_ObjectHideFlags: 0

@@ -23,6 +23,7 @@ public class MainGameInstaller : MonoInstaller
 
         Container.Bind<IDroneSpawner>().To<DroneSpawner>().AsSingle();
         Container.BindInterfacesTo<DronesHolder>().AsSingle();
+        Container.BindInterfacesTo<DrawDronePathController>().AsSingle();
 
         Container.Bind<IPlayerInputHandler>().To<InputHandler>().AsSingle();
 

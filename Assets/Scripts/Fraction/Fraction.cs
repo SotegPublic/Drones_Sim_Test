@@ -10,6 +10,7 @@ public class Fraction: IEquatable<Fraction>
     [SerializeField] private string _fractionName;
     [SerializeField] private BaseView _fractonBase;
     [SerializeField] private Material _fractionMaterial;
+    [SerializeField] private Material _fractionPathMaterial;
 
     private int _resourcesCount;
 
@@ -18,6 +19,7 @@ public class Fraction: IEquatable<Fraction>
     public int ResourcesCount => _resourcesCount;
     public BaseView FractonBase => _fractonBase;
     public Material FractionMaterial => _fractionMaterial;
+    public Material FractionPathMaterial => _fractionPathMaterial;
     public string FractionName => _fractionName;
 
     public void GetResource()

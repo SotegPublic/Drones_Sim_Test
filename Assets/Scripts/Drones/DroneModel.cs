@@ -14,7 +14,7 @@ public class DroneModel
         _view = droneView;
         _currentState = DroneStateType.AwaitTarget;
         _fraction = fraction;
-        _view.SetMaterial(fraction.FractionMaterial);
+        _view.SetMaterial(fraction.FractionMaterial, fraction.FractionPathMaterial);
     }
 
     public float CollectingTime;
@@ -71,12 +71,8 @@ public class DroneModel
     {
         _targetRecource?.Unlock(_view.GetInstanceID());
         _targetRecource = null;
-        _view.ResetMaterial();
-        _view.Agent.ResetPath();
-        _view.Agent.isStopped = true;
-        _view.Agent.velocity = Vector3.zero;
-        _view.Agent.enabled = false;
         _fraction = null;
+        _view.Clear();
         _view = null;
         _currentState = DroneStateType.None;
     }

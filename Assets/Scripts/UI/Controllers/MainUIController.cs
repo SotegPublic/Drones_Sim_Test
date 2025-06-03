@@ -25,11 +25,30 @@ public class MainUIController : IInitializable, IDisposable, IMainUINotifier
     {
         _view.DronesCountSlider.OnSliderPointerUp += WhenDroneCountChange;
         _view.DronesSpeedSlider.OnSliderPointerUp += WhenDroneSpeedChange;
+        _view.DronesCountSlider.onValueChanged.AddListener(UpdateCountSliderText);
+        _view.DronesSpeedSlider.onValueChanged.AddListener(UpdateSpeedSliderText);
+
         _view.ResourceGenerateSpeed.onEndEdit.AddListener(WhenGenerationSpeedChange);
         _view.ShowPathToggle.onValueChanged.AddListener(WhenPathToggleChange);
+        _view.ExitButton.onClick.AddListener(Exit);
 
         _fractionsHolder.Fractions[0].OnGetResource += UpdateFirstFractionScore;
         _fractionsHolder.Fractions[1].OnGetResource += UpdateSecondFractionScore;
+    }
+
+    private void UpdateSpeedSliderText(float value)
+    {
+        _view.DronesSpeedSliderText.text = Math.Round(value,1).ToString();
+    }
+
+    private void UpdateCountSliderText(float value)
+    {
+        _view.DronesCountSliderText.text = value.ToString();
+    }
+
+    private void Exit()
+    {
+        Application.Quit();
     }
 
     private void UpdateSecondFractionScore(int score)
@@ -93,8 +112,11 @@ public class MainUIController : IInitializable, IDisposable, IMainUINotifier
     {
         _view.DronesCountSlider.OnSliderPointerUp -= WhenDroneCountChange;
         _view.DronesSpeedSlider.OnSliderPointerUp -= WhenDroneSpeedChange;
+        _view.DronesCountSlider.onValueChanged.RemoveListener(UpdateCountSliderText);
+        _view.DronesCountSlider.onValueChanged.RemoveListener(UpdateSpeedSliderText);
         _view.ResourceGenerateSpeed.onSubmit.RemoveListener(WhenGenerationSpeedChange);
         _view.ShowPathToggle.onValueChanged.RemoveListener(WhenPathToggleChange);
+        _view.ExitButton.onClick.RemoveListener(Exit);
 
         _fractionsHolder.Fractions[0].OnGetResource -= UpdateFirstFractionScore;
         _fractionsHolder.Fractions[1].OnGetResource -= UpdateSecondFractionScore;
