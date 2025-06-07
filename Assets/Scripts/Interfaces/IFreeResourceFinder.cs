@@ -2,6 +2,7 @@
 
 public interface IFreeResourceFinder
 {
-    public (ResourceView resource, DroneModel resetingDrone) GetNearestFreeResource(Vector3 startPosition, Fraction fraction);
+    public (ResourceView resource, DroneModel resetingDrone) GetNearestFreeResource(DroneModel currentDrone, Fraction fraction);
+    public (bool isNeedChangeTarget, ResourceView resource, DroneModel resetingDrone) ChekLastSpawnedResource(DroneModel currentDrone, ResourceView currentResource, Fraction fraction);
     public bool IsHaveFreeResources();
 }

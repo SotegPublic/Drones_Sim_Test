@@ -23,6 +23,7 @@ public class DroneModel
     public ResourceView TargetResource => _targetRecource;
     public DroneView View => _view;
     public DroneStateType State => _currentState;
+    public int InstanceID => _view.GetInstanceID();
 
     private void SetTarget(ResourceView targetResource)
     {
@@ -60,8 +61,15 @@ public class DroneModel
         _fraction.GetResource();
     }
 
+    public void ChangeTarget(ResourceView targetResource)
+    {
+        _targetRecource?.Unlock(_view.GetInstanceID());
+        _targetRecource = targetResource;
+    }
+
     public void ResetTarget()
     {
+        _targetRecource?.Unlock(_view.GetInstanceID());
         _targetRecource = null;
         _view.Agent.ResetPath();
         _view.Agent.velocity = Vector3.zero;

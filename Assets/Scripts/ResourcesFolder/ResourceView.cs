@@ -21,6 +21,7 @@ public class ResourceView : MonoBehaviour, IPoolableObject
     public GridCell Cell => _cell;
     public bool IsCollecting => _isCollectig;
     public int LockingDroneID => _lockingDroneID;
+    public int InstanceID => GetInstanceID();
 
     public void SetPlacementCell(GridCell cell) => _cell = cell;
     public void Clear()
@@ -39,7 +40,10 @@ public class ResourceView : MonoBehaviour, IPoolableObject
     public void Unlock(int unlockingDroneID)
     {
         if(unlockingDroneID == _lockingDroneID)
+        {
             _isCollectig = false;
+            _lockingDroneID = -1;
+        }
     }
 
     public void Collected()

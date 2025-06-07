@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 
 public class FreeResourceFinder : IFreeResourceFinder
 {
@@ -23,7 +22,7 @@ public class FreeResourceFinder : IFreeResourceFinder
         return false;
     }
 
-    public (ResourceView resource, DroneModel resetingDrone) GetNearestFreeResource(Vector3 startPosition, Fraction fraction)
+    public (ResourceView resource, DroneModel resetingDrone) GetNearestFreeResource(DroneModel currentDrone, Fraction fraction)
     {
         var fractionDrones = _dronesHolder.Drones[fraction];
 
@@ -37,14 +36,12 @@ public class FreeResourceFinder : IFreeResourceFinder
                 continue;
 
             var freeResource = _resourcesHolder.Resources[i];
-            var distance = (freeResource.Transform.position - startPosition).sqrMagnitude;
+            var distance = (freeResource.Transform.position - currentDrone.View.Transform.position).sqrMagnitude;
 
             if (distance >= minDistance)
                 continue;
 
-            resetingDrone = null;
-
-            if (TryGetDroneWithSameTarget(freeResource, fractionDrones, out var drone))
+            if (TryGetDroneWithSameTarget(freeResource, fractionDrones, currentDrone, out var drone))
             {
                 var comparedDistance = (freeResource.Transform.position - drone.View.Transform.position).sqrMagnitude;
 
@@ -59,17 +56,52 @@ public class FreeResourceFinder : IFreeResourceFinder
             {
                 minDistance = distance;
                 resource = freeResource;
+                resetingDrone = null;
             }
         }
 
         return (resource, resetingDrone);
     }
 
-    private bool TryGetDroneWithSameTarget(ResourceView resource, List<DroneModel> drones, out DroneModel drone)
+    public (bool isNeedChangeTarget, ResourceView resource, DroneModel resetingDrone) ChekLastSpawnedResource(DroneModel currentDrone, ResourceView currentResource, Fraction fraction)
+    {
+        var newResource = _resourcesHolder.LastSpawnedResource;
+
+        if(newResource.IsCollecting || newResource == currentResource)
+            return (false, null, null);
+
+        var currentSqrMagnitude = (currentResource.Transform.position - currentDrone.View.Transform.position).sqrMagnitude;
+        var newSqrMagnitude = (newResource.Transform.position - currentDrone.View.Transform.position).sqrMagnitude;
+
+        if(newSqrMagnitude >= currentSqrMagnitude)
+        {
+            return (false, null, null);
+        }
+
+        var fractionDrones = _dronesHolder.Drones[fraction];
+        if (TryGetDroneWithSameTarget(newResource, fractionDrones, currentDrone, out var drone))
+        {
+            var comparedDistance = (newResource.Transform.position - drone.View.Transform.position).sqrMagnitude;
+
+            if(newSqrMagnitude < comparedDistance)
+            {
+                return (true, newResource, drone);
+            }
+
+            return (false, null, null);
+        }
+
+        return (true, newResource, null);
+    }
+
+    private bool TryGetDroneWithSameTarget(ResourceView resource, List<DroneModel> drones, DroneModel currentDrone, out DroneModel drone)
     {
         for(int i = 0; i < drones.Count; i++)
         {
-            if (drones[i].TargetResource == null)
+            if (drones[i].InstanceID == currentDrone.InstanceID)
+                continue;
+
+            if (drones[i].State != DroneStateType.GoToTarget)
                 continue;
 
             if (drones[i].TargetResource == resource)

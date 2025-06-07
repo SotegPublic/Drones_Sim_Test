@@ -74,6 +74,7 @@ public class ResourcesController : IDisposable, IUpdatableController, IInitableC
         resourceView.SetPlacementCell(cell);
         cell.ResourceView = resourceView;
         _resourcesHolder.AddResource(resourceView);
+        _resourcesHolder.UpdateLastSpawnedResource(resourceView);
         resourceView.OnCollected += ReturnResource;
     }
 

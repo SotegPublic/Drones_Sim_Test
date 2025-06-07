@@ -3,4 +3,5 @@
 public interface IResourcesHolder
 {
     public IReadOnlyList<ResourceView> Resources { get; }
+    public ResourceView LastSpawnedResource { get; }
 }

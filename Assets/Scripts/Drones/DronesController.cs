@@ -82,6 +82,8 @@ public class DronesController : IUpdatableController, IInitableController, IDisp
                 SetTargetResource(droneModel);
                 break;
             case DroneStateType.GoToTarget:
+                CheckLastSpawnedResource(droneModel);
+
                 TryLockResource(droneModel);
 
                 if (IsResetingLockedResource(droneModel))
@@ -148,7 +150,7 @@ public class DronesController : IUpdatableController, IInitableController, IDisp
         if (!_finder.IsHaveFreeResources())
             return;
 
-        var tuple = _finder.GetNearestFreeResource(droneModel.View.Transform.position, droneModel.Fraction);
+        var tuple = _finder.GetNearestFreeResource(droneModel, droneModel.Fraction);
 
         if (tuple.resource == null)
             return;
@@ -161,6 +163,24 @@ public class DronesController : IUpdatableController, IInitableController, IDisp
 
         droneModel.View.Agent.SetDestination(tuple.resource.Cell.Position);
         droneModel.SetGoToTargetState(tuple.resource);
+    }
+
+    private void CheckLastSpawnedResource(DroneModel droneModel)
+    {
+        var tuple = _finder.ChekLastSpawnedResource(droneModel, droneModel.TargetResource, droneModel.Fraction);
+
+        if (!tuple.isNeedChangeTarget)
+            return;
+
+        if (tuple.resetingDrone != null)
+        {
+            tuple.resetingDrone.ResetTarget();
+            tuple.resetingDrone.SetAwaitState();
+        }
+
+        droneModel.View.Agent.velocity = Vector3.zero;
+        droneModel.View.Agent.SetDestination(tuple.resource.Cell.Position);
+        droneModel.ChangeTarget(tuple.resource);
     }
 
     private void TryLockResource(DroneModel droneModel)
